@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Combate aos Jabutis no Congresso</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Harmony -->
+    <!-- Application Structure Plan: A single-page, vertically scrolling application with a fixed top navigation that allows smooth scrolling to thematic sections. The flow is designed to be educational: 1) Define the problem ("O Que é?"), 2) Show its impact with data and cases ("O Problema"), 3) Explain the systemic flaws with an interactive diagram ("As Barreiras"), 4) Present solutions with a comparative toggle ("As Soluções"), and 5) A call to action ("Seu Papel"). This structure breaks down a complex topic into digestible parts, promoting understanding over simply presenting report data linearly. The interactive diagram and comparative section are key to making the content engaging and memorable. -->
+    <!-- Visualization & Content Choices: 
+        - Hero Icon (Inform): Unicode characters (🐢, 🌳) for a simple, universally understood visual metaphor. Method: HTML. Justification: Lightweight and effective.
+        - Economic Impact (Inform): Dynamic stats with large typography. Method: HTML/Tailwind. Justification: Grabs attention and highlights key data points.
+        - Post-STF Decision Chart (Change): Bar chart showing a nuanced view of the impact of ADI 5127. Method: Chart.js (Canvas). Interaction: Tooltips on hover. Justification: Visually demonstrates that the problem evolved, not disappeared, adding depth to the narrative.
+        - Legislative Process Diagram (Organize): An interactive flowchart. Method: HTML/Tailwind (Grid/Flexbox). Interaction: Clickable nodes triggering modals. Justification: Deconstructs a complex process, making it easy to understand where the failures occur.
+        - Solutions Comparison (Compare/Organize): Toggle buttons and cards. Method: JS + HTML/Tailwind. Justification: Allows easy comparison between domestic and international solutions without cluttering the UI.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7;
+            color: #4A4A4A;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #A26769;
+            border-bottom-color: #A26769;
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3">
+            <ul class="flex justify-center items-center space-x-4 sm:space-x-8 text-sm sm:text-base">
+                <li><a href="#o-que-e" class="nav-link font-medium pb-1">O Que é?</a></li>
+                <li><a href="#o-problema" class="nav-link font-medium pb-1">O Problema</a></li>
+                <li><a href="#as-barreiras" class="nav-link font-medium pb-1">As Barreiras</a></li>
+                <li><a href="#as-solucoes" class="nav-link font-medium pb-1">As Soluções</a></li>
+                <li><a href="#seu-papel" class="nav-link font-medium pb-1">Seu Papel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="o-que-e" class="py-20 md:py-32 text-center bg-[#F8F5F1]">
+            <div class="container mx-auto px-6">
+                <div class="text-6xl md:text-8xl mb-4">🐢🌳</div>
+                <h1 class="text-4xl md:text-5xl font-bold text-[#4A4A4A] mb-4">O que é um "Jabuti"?</h1>
+                <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-600">
+                    No jargão político brasileiro, "jabuti" é uma emenda inserida em um projeto de lei que não tem relação com o tema original. A expressão vem do ditado: "jabuti não sobe em árvore. Se está lá, ou foi enchente, ou foi mão de gente". É uma forma de aprovar temas polêmicos ou de interesse específico sem o devido debate público, um verdadeiro "contrabando legislativo".
+                </p>
+            </div>
+        </section>
+
+        <section id="o-problema" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#4A4A4A] mb-4">O Problema em Números e Fatos</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                        Além de ferir a transparência democrática, os "jabutis" geram impactos econômicos concretos, muitas vezes custeados por toda a sociedade. A prática distorce políticas públicas e pode beneficiar pequenos grupos em detrimento do interesse coletivo.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-12 items-center mb-16">
+                    <div class="text-center md:text-left">
+                        <h3 class="text-2xl font-bold text-[#A26769] mb-3">Impacto Bilionário</h3>
+                        <p class="text-5xl font-bold text-[#4A4A4A] mb-4">R$ 525 Bilhões</p>
+                        <p class="text-gray-600">Este é o custo estimado até 2040 de "jabutis" inseridos na lei das eólicas offshore. O valor, referente à contratação obrigatória de termelétricas, impacta diretamente a sua conta de luz.</p>
+                    </div>
+                    <div>
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <h3 class="text-xl font-bold text-center mb-4">Efeito da Decisão do STF (ADI 5127)</h3>
+                            <div class="chart-container">
+                                <canvas id="jabutiChart"></canvas>
+                            </div>
+                            <p class="text-sm text-center text-gray-500 mt-4">A decisão do STF em 2015 reduziu os "jabutis" mais óbvios, mas a prática se adaptou, com a persistência de emendas "conexas" de forma questionável.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-20">
+                    <h3 class="text-2xl font-bold text-center mb-8">Estudos de Caso Notórios</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-white p-8 rounded-xl shadow-md border-l-4 border-[#5E8B7E]">
+                            <h4 class="text-xl font-bold mb-2">Privatização da Eletrobras</h4>
+                            <p class="text-gray-600">Na lei de privatização, um "jabuti" obrigou a contratação de energia de usinas termelétricas a gás, uma fonte mais cara e poluente, encarecendo a energia para todos os consumidores sem relação direta com o tema principal da proposta.</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-xl shadow-md border-l-4 border-[#A26769]">
+                            <h4 class="text-xl font-bold mb-2">Recriação do DPVAT</h4>
+                            <p class="text-gray-600">Em um projeto sobre o seguro obrigatório de veículos, foi inserido um "jabuti" fiscal que permitiu ao governo antecipar R$ 15,7 bilhões em despesas, uma manobra orçamentária sem pertinência com o seguro em si.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="as-barreiras" class="py-16 md:py-24 bg-[#F8F5F1]">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#4A4A4A] mb-4">As Barreiras (Que nem sempre funcionam)</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                        O processo legislativo possui pontos de controle para barrar "jabutis", mas eles frequentemente falham por pressão política, interpretações flexíveis das regras ou falta de sanções. Clique nos estágios para entender as falhas.
+                    </p>
+                </div>
+
+                <div class="relative flex flex-col items-center justify-center space-y-8 md:space-y-0 md:flex-row md:space-x-8">
+                    <div class="flex-1 w-full p-4 text-center">
+                        <button class="flow-node" data-modal="modal-comissoes">
+                            <span class="text-4xl">🏛️</span>
+                            <span class="font-bold block mt-2">Comissões</span>
+                        </button>
+                    </div>
+                    <div class="text-2xl text-gray-400 font-bold hidden md:block">&rarr;</div>
+                    <div class="flex-1 w-full p-4 text-center">
+                        <button class="flow-node" data-modal="modal-presidencia">
+                            <span class="text-4xl">👨‍⚖️</span>
+                            <span class="font-bold block mt-2">Presidência da Casa</span>
+                        </button>
+                    </div>
+                    <div class="text-2xl text-gray-400 font-bold hidden md:block">&rarr;</div>
+                    <div class="flex-1 w-full p-4 text-center">
+                        <button class="flow-node" data-modal="modal-veto">
+                            <span class="text-4xl">✍️</span>
+                            <span class="font-bold block mt-2">Veto Presidencial</span>
+                        </button>
+                    </div>
+                     <div class="text-2xl text-gray-400 font-bold hidden md:block">&rarr;</div>
+                    <div class="flex-1 w-full p-4 text-center">
+                        <button class="flow-node" data-modal="modal-stf">
+                            <span class="text-4xl">⚖️</span>
+                            <span class="font-bold block mt-2">Controle do STF</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="as-solucoes" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#4A4A4A] mb-4">Buscando Soluções</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                        O combate aos "jabutis" envolve reformas internas no Congresso e aprendizados de outras democracias. Veja as propostas em discussão e como outros países lidam com o problema.
+                    </p>
+                </div>
+
+                <div class="flex justify-center mb-8">
+                    <div class="bg-gray-200 rounded-full p-1 flex">
+                        <button id="btn-brasil" class="solution-toggle active px-6 py-2 rounded-full font-medium">No Brasil</button>
+                        <button id="btn-mundo" class="solution-toggle px-6 py-2 rounded-full font-medium">No Mundo</button>
+                    </div>
+                </div>
+                
+                <div id="solucoes-brasil" class="solution-content">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <h4 class="font-bold text-lg mb-2 text-[#5E8B7E]">Reformas Regimentais</h4>
+                            <p class="text-gray-600">Projetos como a PEC 70/11 e o PRS 45/2021 buscam positivar na Constituição e nos regimentos a proibição de "jabutis", tornando a regra mais explícita e difícil de contornar.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <h4 class="font-bold text-lg mb-2 text-[#5E8B7E]">Fortalecimento Técnico</h4>
+                            <p class="text-gray-600">Aumentar o poder das consultorias legislativas para emitir pareceres vinculantes sobre a pertinência das emendas, dando base técnica (e não apenas política) para a rejeição de "jabutis".</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <h4 class="font-bold text-lg mb-2 text-[#5E8B7E]">Sanções Efetivas</h4>
+                            <p class="text-gray-600">Discutir e criar mecanismos de responsabilização para parlamentares que insistem na prática, pois a ausência de punição é um dos principais fatores para sua persistência.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="solucoes-mundo" class="solution-content hidden">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-600">
+                            <h4 class="font-bold text-lg mb-2">🇺🇸 Estados Unidos</h4>
+                            <p class="text-gray-600">O Comitê de Regras da Câmara (House Rules Committee) atua como um forte filtro preventivo, proibindo que emendas "não pertinentes" (non-germane) sequer cheguem ao plenário para votação.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-600">
+                            <h4 class="font-bold text-lg mb-2">🇩🇪 Alemanha</h4>
+                            <p class="text-gray-600">O sistema legal desestimula a sobreposição de temas. Emendas ao orçamento, por exemplo, historicamente demonstram disciplina fiscal, com parlamentares frequentemente reduzindo gastos propostos.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-600">
+                            <h4 class="font-bold text-lg mb-2">💡 Lição para o Brasil</h4>
+                            <p class="text-gray-600">Adotar filtros preventivos e rigorosos, como o modelo dos EUA, e fortalecer a cultura de responsabilidade fiscal e qualidade técnica, observada em parlamentos da OCDE, são caminhos promissores.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="seu-papel" class="py-20 md:py-32 text-center bg-[#5E8B7E] text-white">
+            <div class="container mx-auto px-6">
+                 <h2 class="text-3xl md:text-4xl font-bold mb-4">Seu Papel na Fiscalização</h2>
+                <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200 mb-8">
+                   A sociedade civil e a imprensa são vigilantes essenciais contra os "jabutis". Ao cobrar transparência e acompanhar as votações, você fortalece a democracia e ajuda a garantir que o Congresso legisle para o bem comum.
+                </p>
+                <a href="#" class="bg-white text-[#5E8B7E] font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">Acompanhe o Congresso</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#F8F5F1] py-6">
+        <div class="container mx-auto px-6 text-center text-gray-500 text-sm">
+            <p>&copy; 2025 Análise Legislativa Interativa. Aplicação criada para fins educacionais e de conscientização.</p>
+        </div>
+    </footer>
+    
+    <!-- Modals -->
+    <div id="modal-comissoes" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg p-8 max-w-lg w-full transform scale-95">
+            <h3 class="text-2xl font-bold mb-4">Falha nas Comissões</h3>
+            <p class="text-gray-600 mb-6">As comissões temáticas deveriam ser o primeiro filtro. No entanto, o "filtro preliminar" para barrar emendas estranhas muitas vezes se mostra insuficiente. A pressão de outros parlamentares e a velocidade da tramitação (especialmente em MPs) fazem com que relatores se sintam constrangidos ou simplesmente deixem o "jabuti" passar para ser decidido no Plenário.</p>
+            <button class="modal-close bg-[#A26769] text-white font-bold py-2 px-4 rounded-full">Fechar</button>
+        </div>
+    </div>
+    <div id="modal-presidencia" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg p-8 max-w-lg w-full transform scale-95">
+            <h3 class="text-2xl font-bold mb-4">Falha da Presidência</h3>
+            <p class="text-gray-600 mb-6">O Presidente da Câmara ou do Senado tem a prerrogativa de impugnar matérias que ferem o regimento. Contudo, essa é uma decisão de alto custo político. Em um ambiente de negociação e acordos para aprovação de pautas, o presidente pode optar por não criar atrito com sua base ou com a oposição, permitindo que a matéria siga para votação.</p>
+            <button class="modal-close bg-[#A26769] text-white font-bold py-2 px-4 rounded-full">Fechar</button>
+        </div>
+    </div>
+    <div id="modal-veto" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg p-8 max-w-lg w-full transform scale-95">
+            <h3 class="text-2xl font-bold mb-4">Falha do Veto</h3>
+            <p class="text-gray-600 mb-6">O veto presidencial é uma barreira importante, mas não definitiva. O Congresso Nacional pode derrubar o veto do Presidente em sessão conjunta. Se os interesses que inseriram o "jabuti" forem fortes o suficiente para articular uma maioria de deputados e senadores, o veto é revertido e o "jabuti" se torna lei.</p>
+            <button class="modal-close bg-[#A26769] text-white font-bold py-2 px-4 rounded-full">Fechar</button>
+        </div>
+    </div>
+    <div id="modal-stf" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg p-8 max-w-lg w-full transform scale-95">
+            <h3 class="text-2xl font-bold mb-4">Limites do Controle Judicial</h3>
+            <p class="text-gray-600 mb-6">O STF pode declarar um "jabuti" inconstitucional, como fez na ADI 5127. No entanto, o controle judicial é reativo, ou seja, age *depois* que a lei já foi aprovada. Além disso, por segurança jurídica, o STF pode modular os efeitos da decisão (aplicar só para o futuro), não desfazendo os efeitos de leis já existentes com "jabutis", o que enfraquece o fator de dissuasão.</p>
+            <button class="modal-close bg-[#A26769] text-white font-bold py-2 px-4 rounded-full">Fechar</button>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const chartData = {
+                labels: ['Jabutis "Totalmente Estranhos"', 'Jabutis "Conexos"'],
+                datasets: [
+                    {
+                        label: 'Antes da ADI 5127 (2015)',
+                        data: [40, 20],
+                        backgroundColor: '#A26769',
+                        borderColor: '#A26769',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Depois da ADI 5127 (2015)',
+                        data: [10, 18],
+                        backgroundColor: '#5E8B7E',
+                        borderColor: '#5E8B7E',
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            const chartConfig = {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Quantidade (hipotética)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            const jabutiChartCtx = document.getElementById('jabutiChart').getContext('2d');
+            new Chart(jabutiChartCtx, chartConfig);
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            const btnBrasil = document.getElementById('btn-brasil');
+            const btnMundo = document.getElementById('btn-mundo');
+            const solucoesBrasil = document.getElementById('solucoes-brasil');
+            const solucoesMundo = document.getElementById('solucoes-mundo');
+
+            btnBrasil.addEventListener('click', () => {
+                solucoesBrasil.classList.remove('hidden');
+                solucoesMundo.classList.add('hidden');
+                btnBrasil.classList.add('active');
+                btnMundo.classList.remove('active');
+            });
+            
+            btnMundo.addEventListener('click', () => {
+                solucoesBrasil.classList.add('hidden');
+                solucoesMundo.classList.remove('hidden');
+                btnBrasil.classList.remove('active');
+                btnMundo.classList.add('active');
+            });
+            
+            document.querySelectorAll('.solution-toggle').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.solution-toggle').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                })
+            });
+            btnBrasil.style.backgroundColor = '#5E8B7E';
+            btnBrasil.style.color = 'white';
+            document.querySelectorAll('.solution-toggle').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.solution-toggle').forEach(btn => {
+                        btn.style.backgroundColor = '';
+                        btn.style.color = '';
+                    });
+                    this.style.backgroundColor = '#5E8B7E';
+                    this.style.color = 'white';
+                });
+            });
+
+
+            const modalButtons = document.querySelectorAll('[data-modal]');
+            modalButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const modalId = button.dataset.modal;
+                    const modal = document.getElementById(modalId);
+                    modal.classList.remove('opacity-0', 'pointer-events-none');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                });
+            });
+
+            const closeButtons = document.querySelectorAll('.modal-close');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const modal = button.closest('.modal-overlay');
+                    modal.classList.add('opacity-0', 'pointer-events-none');
+                    modal.querySelector('.modal-content').classList.add('scale-95');
+                });
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target.classList.contains('modal-overlay')) {
+                     event.target.classList.add('opacity-0', 'pointer-events-none');
+                     event.target.querySelector('.modal-content').classList.add('scale-95');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
