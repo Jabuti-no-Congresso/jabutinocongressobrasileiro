@@ -17,7 +17,6 @@
         - Post-STF Decision Chart (Change): Bar chart showing a nuanced view of the impact of ADI 5127. Method: Chart.js (Canvas). Interaction: Tooltips on hover. Justification: Visually demonstrates that the problem evolved, not disappeared, adding depth to the narrative.
         - Legislative Process Diagram (Organize): An interactive flowchart. Method: HTML/Tailwind (Grid/Flexbox). Interaction: Clickable nodes triggering modals. Justification: Deconstructs a complex process, making it easy to understand where the failures occur.
         - Solutions Comparison (Compare/Organize): Toggle buttons and cards. Method: JS + HTML/Tailwind. Justification: Allows easy comparison between domestic and international solutions without cluttering the UI.
-        - Jabuti Opposition Counter (Inform/Engage): Button to increment a local counter, displayed as text. Method: JS + HTML/Tailjustification: Provides a simple way for users to engage and express sentiment, making the content more actionable.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -222,20 +221,7 @@
                 <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200 mb-8">
                    A sociedade civil e a imprensa são vigilantes essenciais contra os "jabutis". Ao cobrar transparência e acompanhar as votações, você fortalece a democracia e ajuda a garantir que o Congresso legisle para o bem comum.
                 </p>
-                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
-                    <a href="https://www.camara.leg.br/" target="_blank" class="bg-white text-[#5E8B7E] font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">Acompanhe o Congresso</a>
-                    
-                    <div class="flex flex-col items-center p-4 rounded-lg bg-gray-700 bg-opacity-20 border border-white/20">
-                        <label for="nome-jabuti" class="text-sm mb-1 text-gray-200">Seu nome - opcional:</label>
-                        <input type="text" id="nome-jabuti" placeholder="Seu nome" class="p-2 rounded-md mb-2 text-gray-800 w-48 sm:w-auto">
-                        <button id="btn-contra-jabuti" class="bg-[#A26769] text-white font-bold py-3 px-8 rounded-full hover:bg-[#8B5E60] transition-colors">
-                            Sou contra o "jabuti" atual!
-                        </button>
-                    </div>
-                </div>
-                <!-- Contador de oposições e últimos votantes -->
-                <p id="contador-oposto" class="text-white text-lg font-medium">Pessoas contra: 0</p>
-                <p id="ultimos-votos" class="text-white text-sm mt-2 text-gray-300">Últimos a votar: Ninguém ainda.</p>
+                <a href="https://www.camara.leg.br/transparencia" target="_blank" rel="noopener noreferrer" class="bg-white text-[#5E8B7E] font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">Acompanhe o Congresso</a>
             </div>
         </section>
     </main>
@@ -243,6 +229,7 @@
     <footer class="bg-[#F8F5F1] py-6">
         <div class="container mx-auto px-6 text-center text-gray-500 text-sm">
             <p>&copy; 2025 Análise Legislativa Interativa. Aplicação criada para fins educacionais e de conscientização.</p>
+            <p class="mt-2"><a href="#" id="link-fontes" class="text-[#A26769] hover:underline">Fontes de Informação</a></p>
         </div>
     </footer>
     
@@ -276,10 +263,26 @@
         </div>
     </div>
 
+    <!-- Novo Modal para Fontes de Informação -->
+    <div id="modal-fontes" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-lg p-8 max-w-lg w-full transform scale-95">
+            <h3 class="text-2xl font-bold mb-4">Fontes de Informação</h3>
+            <p class="text-gray-700 mb-4">As informações apresentadas neste site foram compiladas e analisadas a partir das seguintes fontes públicas:</p>
+            <ul class="list-disc list-inside text-sm text-gray-600 mb-6 space-y-2" id="lista-fontes">
+                <!-- As fontes serão carregadas aqui via JavaScript -->
+            </ul>
+            <div class="flex justify-between items-center">
+                <button id="btn-baixar-fontes" class="bg-[#5E8B7E] text-white font-bold py-2 px-4 rounded-full hover:bg-[#4A6E61] transition-colors">
+                    Baixar Fontes (TXT)
+                </button>
+                <button class="modal-close bg-[#A26769] text-white font-bold py-2 px-4 rounded-full">Fechar</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Chart.js configuration and initialization
             const chartData = {
                 labels: ['Jabutis "Totalmente Estranhos"', 'Jabutis "Conexos"'],
                 datasets: [
@@ -340,7 +343,6 @@
             const jabutiChartCtx = document.getElementById('jabutiChart').getContext('2d');
             new Chart(jabutiChartCtx, chartConfig);
             
-            // Smooth scrolling navigation
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('main section');
 
@@ -348,8 +350,7 @@
                 let current = '';
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
-                    // Check if scroll position is within the section, adjusting for fixed header
-                    if (pageYOffset >= sectionTop - 100) { 
+                    if (pageYOffset >= sectionTop - 100) {
                         current = section.getAttribute('id');
                     }
                 });
@@ -362,7 +363,6 @@
                 });
             });
 
-            // Solution toggle buttons (Brasil vs. Mundo)
             const btnBrasil = document.getElementById('btn-brasil');
             const btnMundo = document.getElementById('btn-mundo');
             const solucoesBrasil = document.getElementById('solucoes-brasil');
@@ -371,24 +371,37 @@
             btnBrasil.addEventListener('click', () => {
                 solucoesBrasil.classList.remove('hidden');
                 solucoesMundo.classList.add('hidden');
-                // Update button styles
-                btnBrasil.style.backgroundColor = '#5E8B7E';
-                btnBrasil.style.color = 'white';
-                btnMundo.style.backgroundColor = '';
-                btnMundo.style.color = '';
+                btnBrasil.classList.add('active');
+                btnMundo.classList.remove('active');
             });
             
             btnMundo.addEventListener('click', () => {
                 solucoesBrasil.classList.add('hidden');
                 solucoesMundo.classList.remove('hidden');
-                // Update button styles
-                btnBrasil.style.backgroundColor = '';
-                btnBrasil.style.color = '';
-                btnMundo.style.backgroundColor = '#5E8B7E';
-                btnMundo.style.color = 'white';
+                btnBrasil.classList.remove('active');
+                btnMundo.classList.add('active');
             });
             
-            // Modal functionality
+            document.querySelectorAll('.solution-toggle').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.solution-toggle').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                })
+            });
+            btnBrasil.style.backgroundColor = '#5E8B7E';
+            btnBrasil.style.color = 'white';
+            document.querySelectorAll('.solution-toggle').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.solution-toggle').forEach(btn => {
+                        btn.style.backgroundColor = '';
+                        btn.style.color = '';
+                    });
+                    this.style.backgroundColor = '#5E8B7E';
+                    this.style.color = 'white';
+                });
+            });
+
+
             const modalButtons = document.querySelectorAll('[data-modal]');
             modalButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -415,54 +428,264 @@
                 }
             });
 
-            // New: Jabuti Opposition Counter functionality with optional name
-            let contraJabutiCount = 0;
-            const recentVoters = []; // Array to store recent voter names
-            const maxRecentVoters = 3; // Limit the number of names displayed
+            // Lógica para o novo modal de Fontes de Informação
+            const linkFontes = document.getElementById('link-fontes');
+            const modalFontes = document.getElementById('modal-fontes');
+            const listaFontes = document.getElementById('lista-fontes');
+            const btnBaixarFontes = document.getElementById('btn-baixar-fontes');
 
-            const btnContraJabuti = document.getElementById('btn-contra-jabuti');
-            const contadorOposto = document.getElementById('contador-oposto');
-            const nomeJabutiInput = document.getElementById('nome-jabuti');
-            const ultimosVotosDisplay = document.getElementById('ultimos-votos');
-
-            // Function to update the "Últimos a votar" display
-            function updateRecentVotersDisplay() {
-                if (recentVoters.length === 0) {
-                    ultimosVotosDisplay.textContent = 'Últimos a votar: Ninguém ainda.';
-                } else {
-                    ultimosVotosDisplay.textContent = `Últimos a votar: ${recentVoters.join(', ')}.`;
+            // Fontes do .odt (originalmente de 26 de junho, 14:55)
+            const odtSources = [
+                {
+                    titulo: "Emendas à proposição – Como monitorar? - Sigalei",
+                    url: "https://www.sigalei.com.br/blog/emendas-a-proposicao-como-monitorar"
+                },
+                {
+                    titulo: "O que significa o termo 'jabutis' no jargão político? - TV Cultura - UOL",
+                    url: "https://cultura.uol.com.br/noticias/29512_o-que-significa-o-termo-jabutis-no-jargao-politico.html"
+                },
+                {
+                    titulo: "Entenda o que são os 'jabutis' na política criados pelo processo legislativo - Lupa - UOL",
+                    url: "https://lupa.uol.com.br/jornalismo/2023/06/09/entenda-o-que-sao-os-jabutis-na-politica-criados-pelo-processo-legislativo"
+                },
+                {
+                    titulo: "Entenda o que significa o termo “JABUTI” na política - YouTube",
+                    url: "https://www.youtube.com/watch?v=1XU45l7tSSk"
+                },
+                {
+                    titulo: "1 Conversão da MP 1.040/21 na lei 14.195/21 e os jabutis postos pelo Congresso Nacional no CPC J. E. Carreira Alvim, doutor em - Migalhas",
+                    url: "https://www.migalhas.com.br/arquivos/2021/9/773F39D850C07C_ConsideracoessobreaLei14.195++.pdf"
+                },
+                {
+                    titulo: "O CONTRABANDO LEGISLATIVO E A MODULAÇÃO DE EFEITOS NA AÇÃO DIRETA DE INCONSTITUCIONALIDADE 5.127 LEGISLATIVE CONTROLLING AN - FACULDADE DE DIREITO DE SÃO BERNARDO DO CAMPO",
+                    url: "https://revistas.direitosbc.br/fdsbc/article/download/988/834/3050"
+                },
+                {
+                    titulo: "\"Jabutis\": Governo refaz contas e vê custo de meio trilhão na conta de luz | CNN Brasil",
+                    url: "https://www.cnnbrasil.com.br/economia/macroeconomia/jabutis-governo-refaz-contas-e-ve-custo-de-meio-trilhao-na-conta-de-luz/"
+                },
+                {
+                    titulo: "Lei das eólicas: Jabutis vão custar R$ 197 bi ao consumidor em 25 anos - CNN Brasil",
+                    url: "https://www.cnnbrasil.com.br/economia/macroeconomia/lei-das-eolicas-jabutis-vao-custar-r-197-bi-ao-consumidor-em-25-anos/"
+                },
+                {
+                    titulo: "Emenda parlamentar em medida provisória e contrabando ... - Buscador Dizer o Direito",
+                    url: "https://www.buscadordizerodireito.com.br/jurisprudencia/detalhes/c32d9bf27a3da7ec8163957080c8628e"
+                },
+                {
+                    titulo: "Emenda “jabuti” é inconstitucional, decide STF - OAB",
+                    url: "http://www.oab.org.br/noticia/28904/emenda-jabuti-e-inconstitucional-decide-stf"
+                },
+                {
+                    titulo: "Decisão do STF sobre fim dos 'jabutis' nas MPs é positiva, avaliam líderes - Senado Federal",
+                    url: "https://www12.senado.leg.br/noticias/materias/2015/10/16/decisao-do-stf-sobre-fim-dos-jabutis-nas-mps-e-positiva-avaliam-lideres"
+                },
+                {
+                    titulo: "Deputados proíbem emendas “jabutis” nas medidas provisórias - Notícias",
+                    url: "https://www.camara.leg.br/noticias/559357-deputados-proibem-emendas-jabutis-nas-medidas-provisorias/"
+                },
+                {
+                    titulo: "Legislativo não pode incluir em lei de conversão matéria estranha a MP, decide STF",
+                    url: "https://noticias.stf.jus.br/postsnoticias/legislativo-nao-pode-incluir-em-lei-de-conversao-materia-estranha-a-mp-decide-stf/"
+                },
+                {
+                    titulo: "Um Panorama Recente da Apresentação de Emendas sem Pertinência Temática a Medidas Provisórias pós-ADI 5.127. - Senado Federal",
+                    url: "https://www12.senado.leg.br/publicacoes/estudos-legislativos/tipos-de-estudos/textos-para-discussao/td244"
+                },
+                {
+                    titulo: "Como a praga dos 'jabutis' avança entre deputados, senadores e no governo - VEJA",
+                    url: "https://veja.abril.com.br/brasil/como-a-praga-dos-jabutis-avanca-entre-deputados-senadores-e-no-governo/"
+                },
+                {
+                    titulo: "REGIMENTO INTERNO - Senado Federal",
+                    url: "https://www25.senado.leg.br/documents/12427/45868/RISF+2018+Volume+1.pdf/cd5769c8-46c5-4c8a-9af7-99be436b89c4"
+                },
+                {
+                    titulo: "REGIMENTO INTERNO DA CÂMARA DOS DEPUTADOS - Câmara dos Deputados (várias URLs)",
+                    url: "https://www2.camara.leg.br/atividade-legislativa/legislacao/regimento-interno-da-camara-dos-deputados/arquivos-1/RICD%20atualizado%20ate%20RCD%2016-2025.doc" // E outras variações do RICD
+                },
+                 {
+                    titulo: "REGIMENTO INTERNO DA CÂMARA DOS DEPUTADOS - 21ª EDIÇÃO",
+                    url: "https://bd-rest.camara.leg.br/server/api/core/bitstreams/4154b3c5-017d-417f-82e9-fbae5bc0c337/content"
+                },
+                {
+                    titulo: "Regimento Interno da Câmara dos Deputados",
+                    url: "https://bd.camara.leg.br/bd/bitstream/handle/bdcamara/18847/regimento_interno_3ed.pdf?sequence=29&isAllowed=y"
+                },
+                {
+                    titulo: "Regimento Interno - Câmara dos Deputados",
+                    url: "https://www.camara.leg.br/internet/legislacao/regimento_interno/RIpdf/regInterno.pdf"
+                },
+                {
+                    titulo: "regimento interno da câmara dos deputados - Migalhas",
+                    url: "https://www.migalhas.com.br/arquivos/2014/3/art20140326-06.pdf"
+                },
+                {
+                    titulo: "REGIMENTO INTERNO DA CÂMARA DOS DEPUTADOS - Assembleia Legislativa da Paraíba",
+                    url: "http://www.al.pb.leg.br/wp-content/uploads/2013/07/RES-n%C2%BA-1.578-2012-RIAL-at%C3%A9-a-RES-n%C2%BA-1.837-2019.pdf"
+                },
+                {
+                    titulo: "Regimento Interno da Câmara dos Deputados",
+                    url: "https://bd-rest.camara.leg.br/server/api/core/bitstreams/10dd9d9d-29a5-4e9c-83c5-12d3b9653d5a/content"
+                },
+                {
+                    titulo: "Senado vai analisar projeto que coíbe 'jabutis' em medidas provisórias",
+                    url: "https://www12.senado.leg.br/noticias/materias/2021/09/17/senado-vai-analisar-projeto-que-coibe-jabutis-em-medidas-provisorias"
+                },
+                {
+                    titulo: "Plenário aplica regras contra “jabutis” — Portal Institucional do Senado Federal",
+                    url: "https://www12.senado.leg.br/institucional/presidencia/noticia/renan-calheiros/plenario-aplica-regras-contra-201cjabutis201d"
+                },
+                {
+                    titulo: "Pronunciamento de Lasier Martins em 07/10/2021 - Senado Federal",
+                    url: "https://www25.senado.leg.br/web/atividade/pronunciamentos/-/p/pronunciamento/484579"
+                },
+                {
+                    titulo: "A INCONSTITUCIONALIDADE DAS EMENDAS JABUTIS EM SEDE DE MEDIDA PROVISÓRIA: proposta legislativo-constitucional de... - PPGDC UFF",
+                    url: "https://ppgdc.uff.br/wp-content/uploads/sites/681/2021/04/A-INCONSTITUCIONALIDADE-DAS-EMENDAS-JABUTIS-EM-SEDE-DE-MEDIDA-PROVIS%C3%93RIA-proposta-legislativo-constitucional-de-par%C3%A2metros-de-admissibilidade.pdf"
+                },
+                {
+                    titulo: "Grupo pede veto de Lula a 'jabuti' que reduz transparência no Judiciário | Maquiavel - VEJA",
+                    url: "https://veja.abril.com.br/coluna/maquiavel/grupo-pede-veto-de-lula-a-jabuti-que-reduz-transparencia-no-judiciario/"
+                },
+                {
+                    titulo: "Reforma do setor é bem recebida, mas jabutis no Congresso preocupam - Abrapch",
+                    url: "https://abrapch.org.br/2025/04/reforma-do-setor-e-bem-recebida-mas-jabutis-no-congresso-preocupam/"
+                },
+                {
+                    titulo: "Jabutis de energia geram jogo de empurra no governo e na base de Lula no Congresso – Edição do dia - MegaWhat",
+                    url: "https://megawhat.energy/megaexpresso/jabutis-de-energia-geram-jogo-de-empurra-no-governo-e-na-base-de-lula-no-congresso-edicao-do-dia/"
+                },
+                {
+                    titulo: "'Jabutis' de energia geram jogo de empurra no governo e na base de Lula no Congresso | Jornal de Brasília",
+                    url: "https://jornaldebrasilia.com.br/noticias/politica-e-poder/jabutis-de-energia-geram-jogo-de-empurra-no-governo-e-na-base-de-lula-no-congresso/"
+                },
+                {
+                    titulo: "Governo não descobriu como retomar o controle do Legislativo, diz analista | CNN Brasil",
+                    url: "https://www.cnnbrasil.com.br/politica/governo-nao-descobriu-como-retomar-o-controle-do-legislativo-diz-analista/"
+                },
+                {
+                    titulo: "A avalanche de Projetos de Leis 'urgentes' nas mídias e audiovisual entre 'jabutis' e 'elefantes' - TELA VIVA News",
+                    url: "https://telaviva.com.br/21/08/2023/a-avalanche-de-projetos-de-leis-urgentes-nas-midias-e-audiovisual-entre-jabutis-e-elefantes/"
+                },
+                {
+                    titulo: "Os jabutis no projeto de lei sobre eólicas offshore - Nexo Jornal",
+                    url: "https://www.nexojornal.com.br/expresso/2025/01/05/projeto-lei-offshore-eolicas-setor-eletrico-emendas-jabutis"
+                },
+                {
+                    titulo: "Contra o desmatamento em nossos biomas e em defesa da Mata Atlântica - SOS Mata Atlântica",
+                    url: "https://www.sosma.org.br/noticias/contra-o-desmatamento-em-nossos-biomas-e-em-defesa-da-mata-atlantica"
+                },
+                {
+                    titulo: "'Contrabando legislativo' livra bancos de punição por dano ambiental | ISA",
+                    url: "https://site-antigo.socioambiental.org/pt-br/noticias-socioambientais/contrabando-legislativo-livra-bancos-de-punicao-por-dano-ambiental"
+                },
+                {
+                    titulo: "Organizações pedem veto de Lula a 'jabuti' que reduz transparência em salários do Judiciário - ISTOÉ DINHEIRO",
+                    url: "https://istoedinheiro.com.br/organizacoes-pedem-veto-de-lula-a-jabuti-que-reduz-transparencia-em-salarios-do-judiciario"
+                },
+                {
+                    titulo: "Emenda jabuti: o perigo das alterações irregulares nas leis do setor elétrico - Idec",
+                    url: "https://idec.org.br/dicas-e-direitos/emenda-jabuti"
+                },
+                {
+                    titulo: "Congresso pode usar “jabuti” para rediscutir papel de agências reguladoras; mercado vê risco de politização - InfoMoney",
+                    url: "https://www.infomoney.com.br/politica/congresso-pode-usar-jabuti-para-rediscutir-papel-de-agencias-reguladoras-mercado-ve-risco-de-politizacao/"
+                },
+                {
+                    titulo: "Licenciamento ambiental: 4 'jabutis' no projeto entram na mira de parlamentares pró-Marina Silva - Notícias - Instituto Socioambiental",
+                    url: "https://pib.socioambiental.org/en/Not%C3%ADcias?id=229861"
+                },
+                {
+                    titulo: "Rules Committee Protocols | House of Representatives Committee on Rules",
+                    url: "https://rules.house.gov/resources/rules-committee-protocols"
+                },
+                {
+                    titulo: "Rules and Resources | House of Representatives Committee on Rules",
+                    url: "https://rules.house.gov/resources"
+                },
+                {
+                    titulo: "House of Representatives Committee on Rules |",
+                    url: "https://rules.house.gov/"
+                },
+                {
+                    titulo: "Casa do espanto: os estranhos ritos do Parlamento britânico | Mundialista - VEJA",
+                    url: "https://veja.abril.com.br/coluna/mundialista/casa-do-espanto-os-estranhos-ritos-do-parlamento-britanico/"
+                },
+                {
+                    titulo: "Rules and traditions of Parliament",
+                    url: "https://www.parliament.uk/about/how/role/customs/"
+                },
+                {
+                    titulo: "Regimentos Parlamentares do Mundo - Observatório para a Qualidade da Lei",
+                    url: "https://observalei.direito.ufmg.br/wp-content/uploads/2021/04/regimentos-parlamentares-do-mundo.pdf"
+                },
+                {
+                    titulo: "Rules of behaviour and courtesies in the House of Commons - UK Parliament",
+                    url: "https://www.parliament.uk/globalassets/documents/rules-of-behaviour.pdf"
+                },
+                {
+                    titulo: "Bruxelas polemiza ao propor controle de orçamentos | Exame",
+                    url: "https://exame.com/economia/bruxelas-polemiza-ao-propor-controle-orcamentos-558907/"
+                },
+                {
+                    titulo: "Emendas parlamentares do Brasil destoam do padrão dos países da OCDE - Insper",
+                    url: "https://www.insper.edu.br/pt/conteudos/politicas-publicas/emendas-parlamentares-do-brasil-destoam-do-padrao-dos-paises-da-ocde"
+                },
+                {
+                    titulo: "Uma avaliação da problemática das emendas parlamentares - FGV Ibre",
+                    url: "https://portalibre.fgv.br/sites/default/files/2024-05/td15-uma-avaliacao-da-problematica-das-emendas-parlamentares_0.pdf"
+                },
+                {
+                    titulo: "O federalismo alemão: aspectos gerais e dinâmica - Economia - Unicamp",
+                    url: "https://www.eco.unicamp.br/images/arquivos/artigos/TD/TD440.pdf"
+                },
+                {
+                    titulo: "Queda de decreto do aumento do IOF, dados do PIB dos EUA e mudança de tom de Powell: fique por dentro dos destaques desta quinta-feira (26) - Empiricus",
+                    url: "https://www.empiricus.com.br/newsletters/mercado-em-cinco-minutos/queda-de-decreto-do-aumento-do-iof-dados-do-pib-dos-eua-e-mudanca-de-tom-de-powell-fique-por-dentro-dos-destaques-desta-quinta-feira-26-capf/"
                 }
-            }
+            ];
 
-            // Initialize display
-            contadorOposto.textContent = `Pessoas contra: ${contraJabutiCount}`;
-            updateRecentVotersDisplay();
+            // As fontes existentes (as que eu havia colocado) já estavam incluídas no código anterior.
+            // Para garantir que não haja duplicação e que todas as fontes estejam presentes,
+            // as fontes "odtSources" são agora a lista completa e definitiva.
+            const fontes = odtSources; 
+            
+            // Preenche a lista de fontes no modal
+            listaFontes.innerHTML = ''; // Limpa a lista existente antes de preencher
+            fontes.forEach(fonte => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = fonte.url;
+                a.textContent = fonte.titulo;
+                a.target = "_blank"; // Abre em nova aba
+                a.rel = "noopener noreferrer"; // Segurança
+                a.classList.add('text-blue-600', 'hover:underline');
+                li.appendChild(a);
+                listaFontes.appendChild(li);
+            });
 
-            btnContraJabuti.addEventListener('click', () => {
-                contraJabutiCount++;
-                contadorOposto.textContent = `Pessoas contra: ${contraJabutiCount}`;
+            linkFontes.addEventListener('click', (e) => {
+                e.preventDefault(); // Impede o comportamento padrão do link
+                modalFontes.classList.remove('opacity-0', 'pointer-events-none');
+                modalFontes.querySelector('.modal-content').classList.remove('scale-95');
+            });
 
-                const voterName = nomeJabutiInput.value.trim();
-                if (voterName) {
-                    recentVoters.push(voterName);
-                    // Keep only the latest names
-                    if (recentVoters.length > maxRecentVoters) {
-                        recentVoters.shift(); // Remove the oldest name
-                    }
-                    updateRecentVotersDisplay();
-                } else {
-                    // If no name is provided, you might want to add a generic entry or just skip
-                    // For now, we'll just skip adding to the recentVoters if no name is provided.
-                }
+            btnBaixarFontes.addEventListener('click', () => {
+                let content = "Fontes de Informação - O Combate aos Jabutis no Congresso:\n\n";
+                fontes.forEach(fonte => {
+                    content += `${fonte.titulo}\n${fonte.url}\n\n`;
+                });
 
-                // Clear the input field after voting
-                nomeJabutiInput.value = '';
-
-                // Optional: Disable button for a short period to prevent rapid clicks
-                btnContraJabuti.disabled = true;
-                setTimeout(() => {
-                    btnContraJabuti.disabled = false;
-                }, 1000); // Re-enable after 1 second
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'fontes_combate_jabutis.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
             });
         });
     </script>
