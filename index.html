@@ -17,6 +17,7 @@
         - Post-STF Decision Chart (Change): Bar chart showing a nuanced view of the impact of ADI 5127. Method: Chart.js (Canvas). Interaction: Tooltips on hover. Justification: Visually demonstrates that the problem evolved, not disappeared, adding depth to the narrative.
         - Legislative Process Diagram (Organize): An interactive flowchart. Method: HTML/Tailwind (Grid/Flexbox). Interaction: Clickable nodes triggering modals. Justification: Deconstructs a complex process, making it easy to understand where the failures occur.
         - Solutions Comparison (Compare/Organize): Toggle buttons and cards. Method: JS + HTML/Tailwind. Justification: Allows easy comparison between domestic and international solutions without cluttering the UI.
+        - Jabuti Opposition Counter (Inform/Engage): Button to increment a local counter, displayed as text. Method: JS + HTML/Tailwind. Justification: Provides a simple way for users to engage and express sentiment, making the content more actionable.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -221,7 +222,20 @@
                 <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200 mb-8">
                    A sociedade civil e a imprensa são vigilantes essenciais contra os "jabutis". Ao cobrar transparência e acompanhar as votações, você fortalece a democracia e ajuda a garantir que o Congresso legisle para o bem comum.
                 </p>
-                <a href="https://www.camara.leg.br/transparencia" target="_blank" rel="noopener noreferrer" class="bg-white text-[#5E8B7E] font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">Acompanhe o Congresso</a>
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
+                    <a href="https://www.camara.leg.br/" target="_blank" class="bg-white text-[#5E8B7E] font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">Acompanhe o Congresso</a>
+                    
+                    <div class="flex flex-col items-center p-4 rounded-lg bg-gray-700 bg-opacity-20 border border-white/20">
+                        <label for="nome-jabuti" class="text-sm mb-1 text-gray-200">Seu nome - opcional:</label>
+                        <input type="text" id="nome-jabuti" placeholder="Seu nome" class="p-2 rounded-md mb-2 text-gray-800 w-48 sm:w-auto">
+                        <button id="btn-contra-jabuti" class="bg-[#A26769] text-white font-bold py-3 px-8 rounded-full hover:bg-[#8B5E60] transition-colors">
+                            Sou contra o "jabuti" atual!
+                        </button>
+                    </div>
+                </div>
+                <!-- Contador de oposições e últimos votantes -->
+                <p id="contador-oposto" class="text-white text-lg font-medium">Pessoas contra: 0</p>
+                <p id="ultimos-votos" class="text-white text-sm mt-2 text-gray-300">Últimos a votar: Ninguém ainda.</p>
             </div>
         </section>
     </main>
@@ -283,6 +297,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Chart.js configuration and initialization
             const chartData = {
                 labels: ['Jabutis "Totalmente Estranhos"', 'Jabutis "Conexos"'],
                 datasets: [
@@ -343,6 +358,7 @@
             const jabutiChartCtx = document.getElementById('jabutiChart').getContext('2d');
             new Chart(jabutiChartCtx, chartConfig);
             
+            // Smooth scrolling navigation
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('main section');
 
@@ -350,7 +366,8 @@
                 let current = '';
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - 100) {
+                    // Check if scroll position is within the section, adjusting for fixed header
+                    if (pageYOffset >= sectionTop - 100) { 
                         current = section.getAttribute('id');
                     }
                 });
@@ -363,6 +380,7 @@
                 });
             });
 
+            // Solution toggle buttons (Brasil vs. Mundo)
             const btnBrasil = document.getElementById('btn-brasil');
             const btnMundo = document.getElementById('btn-mundo');
             const solucoesBrasil = document.getElementById('solucoes-brasil');
@@ -371,37 +389,24 @@
             btnBrasil.addEventListener('click', () => {
                 solucoesBrasil.classList.remove('hidden');
                 solucoesMundo.classList.add('hidden');
-                btnBrasil.classList.add('active');
-                btnMundo.classList.remove('active');
+                // Update button styles
+                btnBrasil.style.backgroundColor = '#5E8B7E';
+                btnBrasil.style.color = 'white';
+                btnMundo.style.backgroundColor = '';
+                btnMundo.style.color = '';
             });
             
             btnMundo.addEventListener('click', () => {
                 solucoesBrasil.classList.add('hidden');
                 solucoesMundo.classList.remove('hidden');
-                btnBrasil.classList.remove('active');
-                btnMundo.classList.add('active');
+                // Update button styles
+                btnBrasil.style.backgroundColor = '';
+                btnBrasil.style.color = '';
+                btnMundo.style.backgroundColor = '#5E8B7E';
+                btnMundo.style.color = 'white';
             });
             
-            document.querySelectorAll('.solution-toggle').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.solution-toggle').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                })
-            });
-            btnBrasil.style.backgroundColor = '#5E8B7E';
-            btnBrasil.style.color = 'white';
-            document.querySelectorAll('.solution-toggle').forEach(button => {
-                button.addEventListener('click', function() {
-                    document.querySelectorAll('.solution-toggle').forEach(btn => {
-                        btn.style.backgroundColor = '';
-                        btn.style.color = '';
-                    });
-                    this.style.backgroundColor = '#5E8B7E';
-                    this.style.color = 'white';
-                });
-            });
-
-
+            // Modal functionality for flow-nodes
             const modalButtons = document.querySelectorAll('[data-modal]');
             modalButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -428,14 +433,64 @@
                 }
             });
 
-            // Lógica para o novo modal de Fontes de Informação
+            // Jabuti Opposition Counter functionality with optional name
+            let contraJabutiCount = 0;
+            const recentVoters = []; // Array to store recent voter names
+            const maxRecentVoters = 3; // Limit the number of names displayed
+
+            const btnContraJabuti = document.getElementById('btn-contra-jabuti');
+            const contadorOposto = document.getElementById('contador-oposto');
+            const nomeJabutiInput = document.getElementById('nome-jabuti');
+            const ultimosVotosDisplay = document.getElementById('ultimos-votos');
+
+            // Function to update the "Últimos a votar" display
+            function updateRecentVotersDisplay() {
+                if (recentVoters.length === 0) {
+                    ultimosVotosDisplay.textContent = 'Últimos a votar: Ninguém ainda.';
+                } else {
+                    ultimosVotosDisplay.textContent = `Últimos a votar: ${recentVoters.join(', ')}.`;
+                }
+            }
+
+            // Initialize display for the counter
+            contadorOposto.textContent = `Pessoas contra: ${contraJabutiCount}`;
+            updateRecentVotersDisplay();
+
+            btnContraJabuti.addEventListener('click', () => {
+                contraJabutiCount++;
+                contadorOposto.textContent = `Pessoas contra: ${contraJabutiCount}`;
+
+                const voterName = nomeJabutiInput.value.trim();
+                if (voterName) {
+                    recentVoters.push(voterName);
+                    // Keep only the latest names
+                    if (recentVoters.length > maxRecentVoters) {
+                        recentVoters.shift(); // Remove the oldest name
+                    }
+                    updateRecentVotersDisplay();
+                } else {
+                    // If no name is provided, you might want to add a generic entry or just skip
+                    // For now, we'll just skip adding to the recentVoters if no name is provided.
+                }
+
+                // Clear the input field after voting
+                nomeJabutiInput.value = '';
+
+                // Optional: Disable button for a short period to prevent rapid clicks
+                btnContraJabuti.disabled = true;
+                setTimeout(() => {
+                    btnContraJabuti.disabled = false;
+                }, 1000); // Re-enable after 1 second
+            });
+
+            // Logic for the "Fontes de Informação" modal
             const linkFontes = document.getElementById('link-fontes');
             const modalFontes = document.getElementById('modal-fontes');
             const listaFontes = document.getElementById('lista-fontes');
             const btnBaixarFontes = document.getElementById('btn-baixar-fontes');
 
-            // Fontes do .odt (originalmente de 26 de junho, 14:55)
-            const odtSources = [
+            // Fontes extraídas do arquivo .odt e adicionais
+            const allSources = [
                 {
                     titulo: "Emendas à proposição – Como monitorar? - Sigalei",
                     url: "https://www.sigalei.com.br/blog/emendas-a-proposicao-como-monitorar"
@@ -502,7 +557,7 @@
                 },
                 {
                     titulo: "REGIMENTO INTERNO DA CÂMARA DOS DEPUTADOS - Câmara dos Deputados (várias URLs)",
-                    url: "https://www2.camara.leg.br/atividade-legislativa/legislacao/regimento-interno-da-camara-dos-deputados/arquivos-1/RICD%20atualizado%20ate%20RCD%2016-2025.doc" // E outras variações do RICD
+                    url: "https://www2.camara.leg.br/atividade-legislativa/legislacao/regimento-interno-da-camara-dos-deputados/arquivos-1/RICD%20atualizado%20ate%20RCD%2016-2025.doc" 
                 },
                  {
                     titulo: "REGIMENTO INTERNO DA CÂMARA DOS DEPUTADOS - 21ª EDIÇÃO",
@@ -645,15 +700,9 @@
                     url: "https://www.empiricus.com.br/newsletters/mercado-em-cinco-minutos/queda-de-decreto-do-aumento-do-iof-dados-do-pib-dos-eua-e-mudanca-de-tom-de-powell-fique-por-dentro-dos-destaques-desta-quinta-feira-26-capf/"
                 }
             ];
-
-            // As fontes existentes (as que eu havia colocado) já estavam incluídas no código anterior.
-            // Para garantir que não haja duplicação e que todas as fontes estejam presentes,
-            // as fontes "odtSources" são agora a lista completa e definitiva.
-            const fontes = odtSources; 
             
             // Preenche a lista de fontes no modal
-            listaFontes.innerHTML = ''; // Limpa a lista existente antes de preencher
-            fontes.forEach(fonte => {
+            allSources.forEach(fonte => {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 a.href = fonte.url;
@@ -673,7 +722,7 @@
 
             btnBaixarFontes.addEventListener('click', () => {
                 let content = "Fontes de Informação - O Combate aos Jabutis no Congresso:\n\n";
-                fontes.forEach(fonte => {
+                allSources.forEach(fonte => {
                     content += `${fonte.titulo}\n${fonte.url}\n\n`;
                 });
 
